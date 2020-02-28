@@ -33,7 +33,7 @@ typedef struct bodyNode
 typedef struct headNode
 {
 	headNode * next;		// pointer to next headNode
-	bodyNode * linkedPix;	// pointer to the head's bodynode
+	bodyNode */**/ linkedPix;	// pointer to the head's bodynode
 };
 
 
@@ -46,11 +46,10 @@ public:
 	linkedList();
 
 
-
 	// newHeadNode : Creates a new headNode 
 	// preconditions : given in bounds, positive rows and columns
 	// postconditions : none
-	void newHeadNode(int row, int col);
+	void newHeadNode(int row, int col, headNode* lastHead);
 
 	// newBodyNode : returns a new bodyNode 
 	// preconditions : given in bounds, positive rows and columns
@@ -63,6 +62,7 @@ public:
 	~linkedList();
 
 private:
-	headNode* masterList; // the "head of heads"
+	headNode masterNode;
+	//headNode* masterList; // the "head of heads"
 };
 

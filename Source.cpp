@@ -34,8 +34,11 @@ int main() // have to use recursion and the up down left right
 	Image picture,
 		newPicture;
 
-	headNode masterList,
+	linkedList picList;
+
+	headNode listHead,/**/
 		* currentMstr;
+
 
 	// initialize variables
 	//masterList.linkedPix = nullptr;
@@ -110,21 +113,22 @@ int main() // have to use recursion and the up down left right
 			if (ifNotTaken())
 			{
 				// if there are no masterNodes
-				if (masterList.linkedPix == nullptr)
+				if (listHead.linkedPix == nullptr)
 				{
 					// create the first masterNode
 					//masterList.linkedPix.newBodyNode(row, col);
-					masterList.linkedPix = & /*linkedPix-> (?)*/newBodyNode(row, col);
-					currentMstr = &masterList;
+					//listHead.linkedPix = &picList.newBodyNode(row, col);/*linkedPix-> (?)*/
+					picList.newHeadNode(row, col, &listHead);
+					currentMstr = &listHead;
 
 					// get all the nodes that are similar
-					spread(masterList.linkedPix, masterList.linkedPix, picture, newPicture);
+					spread(*listHead.linkedPix, *listHead.linkedPix, picture, newPicture);
 				}
-
+				
 				// if there are then
 				else
 				{
-					currentMstr->next = newHeadNode(row, col);
+					picList.newHeadNode(row, col, currentMstr);
 					currentMstr = currentMstr->next;
 
 					// get all the nodes that are similar
@@ -162,6 +166,26 @@ int main() // have to use recursion and the up down left right
 	system("pause");
 	return 0;
 }
+
+// NOTE: needs to be the average color of all the pixels in the linked list
+
+void averageColor(bodyNode headNode, Image picture)
+{
+	// loop through the linkedList of headNode and using their rows and columns I would get the 
+	// pixel colors add them up and devide by the number of pixels
+
+	int numOfPixels = 0,
+		red = 0,
+		blue = 0,
+		green = 0;
+
+	while (headNode.next)
+	{
+
+	}
+
+}
+
 
 // spread : makes a bodyNode linkedList of all the objects that are  
 // Preconditions:  that the Image's are initialized, and that head and current also have proper linkedLists

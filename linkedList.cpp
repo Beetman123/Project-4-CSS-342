@@ -12,45 +12,46 @@
 
 linkedList::linkedList()
 {
-	masterList->next = nullptr;
-	masterList->linkedPix = nullptr;
+	masterNode.next = nullptr;
+	masterNode.linkedPix = nullptr;//= ;
 }
 
 // newHeadNode : Creates a new headNode 
 // preconditions : given in bounds, positive rows and columns
 // postconditions : none
-void linkedList::newHeadNode(int row, int col)
+void linkedList::newHeadNode(int row, int col, headNode * lastHead)
 {
 	// if 0
-	if (masterList->linkedPix == nullptr)
+	if (masterNode.linkedPix == nullptr)
 	{
 		//masterList = new headNode;
 		//masterList->next = nullptr;
-		masterList->linkedPix = &newBodyNode(row, col);
+		masterNode.linkedPix = &newBodyNode(row, col);
 	}
 
-	
-	// if 1 nodes
-	else if (masterList->linkedPix == nullptr)
-	{
-		masterList = new headNode;
-		masterList->next = nullptr;
-		*masterList->linkedPix = newBodyNode(row, col);
-	}
+	//
+	//// if 1 nodes
+	//else if (masterList->linkedPix == nullptr)
+	//{
+	//	masterList = new headNode;
+	//	masterList->next = nullptr;
+	//	*masterList->linkedPix = newBodyNode(row, col);
+	//}
 
-	// if more then 1 node
-	else
-	{
-		headNode* lastHead = masterList->next;
+	//// if more then 1 node
+	//else
+	//{
+	/*	headNode* lastHead = masterList->next;
 		while (lastHead->next != nullptr)
-			lastHead = lastHead->next;
+			lastHead = lastHead->next;*/
 		
 		lastHead->next = new headNode;
 		lastHead = lastHead->next;
 		lastHead->next = nullptr;
-		
-	}
+	//}
 }
+
+
 
 
 // cant be called for some reason		/**/
