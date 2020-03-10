@@ -36,7 +36,7 @@ Image::Image()
 //				rows = 0, cols = 0, pixels = nullptr.
 Image::Image(int rows, int cols)
 {
-	this->picture = createImage(rows, cols);
+	this->picture = CreateImage(rows, cols);
 }
 
 
@@ -57,9 +57,11 @@ Image::Image(const Image& oldPic)
 //				Each pixel has red = 0, green = 0, blue = 0.
 //				Otherwise, the returned image has:
 //				rows = 0, cols = 0, pixels = nullptr.
-image Image::createImage(int rows, int cols)
+//image Image::createImage(int rows, int cols)
+void Image::createImage(int rows, int cols)
 {
-	return CreateImage(rows, cols);
+	//return CreateImage(rows, cols);
+	this->picture = CreateImage(rows, cols);
 }
 
 
@@ -175,6 +177,16 @@ void Image::swapPixels(pixel& p1, pixel& p2)
 	p2 = temppixel;
 }
 
+// copyPixel: copys the color of one pixel to another
+// Preconditions:  None
+// Postconditions: a's color == b's color 
+void Image::copyPixel(pixel& orgin, pixel& copy)
+{
+	copy.blue = orgin.blue;
+	copy.green = orgin.green;
+	copy.red = orgin.red;
+}
+
 
 
 // operator > : compares if one picture has more/less pixels then the other
@@ -277,16 +289,15 @@ const byte Image::colorBlue(int row, int col) const
 // Postconditions: returns the number of red color tone
 const byte Image::colorRed(int row, int col) const
 {
-	return this->picture.pixels[row][col].red;												 // is sending the wrong value		error
+	return this->picture.pixels[row][col].red;
 }
-
 
 // colorGreen : outputs the number of green color tone
 // Preconditions:  that the Image is initialized 
 // Postconditions: returns the number of green color tone
 const byte Image::colorGreen(int row, int col) const
 {
-	return this->picture.pixels[row][col].green;											 // is starting at col 8 // now 4
+	return this->picture.pixels[row][col].green;			
 }
 
 

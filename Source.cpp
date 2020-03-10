@@ -3,7 +3,7 @@
 
 //#include "Image.h"
 
-//#include "linkedList.h" // ? // I don't need linkedList class I only need a node ion the Image class
+//#include "linkedList.h" // ? // I don't need linkedList class I only need a Node ion the Image class
 
 #include "Image.h"
 #include "linkedList.h"
@@ -12,44 +12,55 @@ using namespace std;
 
 // Function Declarations
 
-// spread : makes a bodyNode linkedList of all the objects that are  
+// spread : makes a Node linkedList of all the objects that are  
 // Preconditions:  that the Image's are initialized, and that head and current also have proper linkedLists
 // Postconditions: the newPicture will look like a watered-down version of oldPicture
-void spread(const bodyNode& newHead, bodyNode& currentNode, const Image& oldPicture, Image& newPicture);
+void spread(Node & newHead, Node & list, const Image& oldPicture, Image& newPicture, linkedList linklst, int allowedDif);
+
+
+// Done
 
 // ifNotTaken : checks if the image at a certian pixel is black or white
 // Preconditions:  that the Image's are initialized, and that head and current also have proper linkedLists
 // Postconditions: the newPicture will look like a watered-down version of oldPicture
-bool ifNotTaken();
+bool ifNotTaken(const Image& picture, int row, int col);
+
+void averageColor(Node head, Image picture, Image newPicture);
 
 // recursiveColorChange : changes the number of green color tone
 // Preconditions:  that the Image's are initialized, and that head and current also have proper linkedLists
 // Postconditions: the newPicture will look like a watered-down version of oldPicture
-void recursiveColorChange(const bodyNode* head, bodyNode* current, const Image& oldPicture, Image& newPicture);
+void recursiveColorChange(const Node * head, Node * current, Image& newPicture);
 
 
 
 int main() // have to use recursion and the up down left right
 {
-	Image picture,
-		newPicture;
+	// Initialize variables
 
-	linkedList picList;
+	Image picture, // inputed picture
+		newPicture; // picture but changed				
 
-	headNode listHead,/**/
-		* currentMstr;
+	linkedList picList;  // used to call linkedList functions
+
+	Node * list = nullptr, // head of entire list of nodes  error given is that list is uninialized
+		* listBack = nullptr, // pointer to the end of the list
+		* current = nullptr;
+
+	const int allowedDifInPixels = 100;
+	int numberOfSeedPixels = 0;
 
 
-	// initialize variables
-	//masterList.linkedPix = nullptr;
-	
-	bool addedToList = false;
+	//masterList.next = nullptr;
 
 	// read in picture
-	picture.readImage("test4.gif");
+	picture.readImage("test4.gif"); 
 	
 	// make new "blank" picture (black) of same size
-	newPicture.createImage(picture.getrows(), picture.getcols()); 
+	newPicture.createImage(picture.getrows(), picture.getcols());			// it starts as all black  // works!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+	// TESTING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	//newPicture.saveImage("newPictureBefore.gif");
 
 	// First loops mission:
 	// looping through picture to make all the linked lists
@@ -57,18 +68,15 @@ int main() // have to use recursion and the up down left right
 	// loop through picture 
 	// going through row by row 
 			// check if the pixel is part of a linked list (already connected to a 'master' node)
-				// if not then make it a master node and have that node "virus spread" through the entire picture
-				// when making the node make the output version white (inorder to verify that it is part of a linkedlist)
+				// if not then make it a master Node and have that Node "virus spread" through the entire picture
+				// when making the Node make the output version white (inorder to verify that it is part of a linkedlist)
 
 	/*
 	useful functions:
 	
 	// check if the colors are close enough
 	picture.ifSimilarColor(int rowOrign, int colOrign, int rowNxt, int colNxt, int alowedDifference);
-	
-
-
-	*/
+		*/
 	
 
 	for (int row = 0; row < picture.getrows(); row++)
@@ -76,24 +84,15 @@ int main() // have to use recursion and the up down left right
 		for (int col = 0; col < picture.getcols(); col++)
 		{
 			//// if the pixel isn't part of a linked list = (black >>> newpicture)
-			//if (newPicture.colorBlue(row, col) == 0 &&
-			//	newPicture.colorRed(row, col) == 0 &&
-			//	newPicture.colorGreen(row, col) == 0)
-			//{
-			//	// make the pixel the head of a NEW linked list
-			//			// also: make it turn black
-			//}
 
-			//addedToList = false;
-
-			//while (/*currentMstr ||*/ currentMstr->next == nullptr || addedToList == true)
+			//while (/*list ||*/ list->next == nullptr || addedToList == true)
 			//{
 			//	// if there are no masterNodes
-			//	if (masterList.linkedPix == nullptr)
+			//	if (masterList.next == nullptr)
 			//	{
 			//		// create the first masterNode
-			//		//masterList.linkedPix.newBodyNode(row, col);
-			//		masterList.linkedPix = & /*linkedPix-> (?)*/newBodyNode(row, col);
+			//		//masterList.next.newBodyNode(row, col);
+			//		masterList.next = & /*next-> (?)*/newBodyNode(row, col);
 			//		
 			//	}
 			//	// check if current pixel is similar to 
@@ -106,36 +105,62 @@ int main() // have to use recursion and the up down left right
 			//	}
 			//	
 			//	//get next
-			//	currentMstr = currentMstr->next;
+			//	list = list->next;
 			//}
 
 			// if not taken then create a new master node
-			if (ifNotTaken())
+			if (ifNotTaken(newPicture, row, col))
 			{
-				// if there are no masterNodes
-				if (listHead.linkedPix == nullptr)
-				{
-					// create the first masterNode
-					//masterList.linkedPix.newBodyNode(row, col);
-					//listHead.linkedPix = &picList.newBodyNode(row, col);/*linkedPix-> (?)*/
-					picList.newHeadNode(row, col, &listHead);
-					currentMstr = &listHead;
+				cout << "numberOfSeedPixels = " << ++numberOfSeedPixels << "   ";
 
-					// get all the nodes that are similar
-					spread(*listHead.linkedPix, *listHead.linkedPix, picture, newPicture);
-				}
+
+
+				// if there are no masterNodes
+				//if (list.next == nullptr)
+				//{
+					// create the first masterNode
+
+					//masterList.next.newBodyNode(row, col);
+					//list.next = &picList.newBodyNode(row, col);/*next-> (?)*/
+					//picList.newnode(row, col, &list);
 				
-				// if there are then
+																															// there is something wrong here
+				// if list.next doesn't have 
+				if (list == nullptr)
+				{
+					list = &picList.newNode(row, col, true);
+					listBack = list;
+					//listBack->next = nullptr; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				}
+
 				else
 				{
-					picList.newHeadNode(row, col, currentMstr);
-					currentMstr = currentMstr->next;
+					listBack->next = &picList.newNode(row, col, true);
+					listBack = listBack->next;
+					//listBack->next = nullptr; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				}
+
+				//picList.newNode(row, col, true);
+
+				//list->next = picList.newNode();
+
+				// get all the nodes that are similar
+				spread(*listBack, *listBack, picture, newPicture, picList, allowedDifInPixels); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			
+				//}
+				// if there are then create a new one
+				//else
+				//{
+					//picList.newnode(row, col, list);
+					//picList.insertNode(row, col, list.next);
+					//list = list.next;
 
 					// get all the nodes that are similar
-					spread(currentMstr.linkedPix, currentMstr.linkedPix, picture, newPicture);
-				}
+					//spread(list.next, list.next, picture, newPicture, picList);
+				//}
 			}
 		}
+		cout << " row is " << row << endl;
 	}
 
 
@@ -150,15 +175,37 @@ int main() // have to use recursion and the up down left right
 	//		//if (picture. )
 	//	}
 	//}
+//
+//
+//
+	//list = &masterList; // this is how it works
+//
+//
+//
+	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	//while (list.next != nullptr)
+	//{
+	//	// call the recursive function with the head body Node as a paramater
+	//	recursiveColorChange(list.next, list.next, picture, newPicture);
+	//}
 
-	currentMstr = &masterList; // this is how it works
+	// set current to 
+	current = list; // current is set to nullptr !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-	while (currentMstr->next != nullptr)
+	while (current->next != nullptr)  // 
 	{
-		// call the recursive function with the head body node as a paramater
-		recursiveColorChange(currentMstr->linkedPix, currentMstr->linkedPix, picture, newPicture);
+		if (current->ifHead)
+		{
+			averageColor(*current, picture, newPicture);
+			recursiveColorChange(current, current, newPicture);
+		}
+
+
+		current = current->next;
 	}
 
+
+	newPicture.saveImage("newPictureAfterwards.gif");
 	
 	// to look at the image at different parts of the the code process use the 
 	picture.saveImage("filename.gif");
@@ -169,9 +216,12 @@ int main() // have to use recursion and the up down left right
 
 // NOTE: needs to be the average color of all the pixels in the linked list
 
-void averageColor(bodyNode headNode, Image picture)
+// averageColor : Gets the average color from head node until next ifHead is true and changes head to the average
+// preconditions: The head and picture are initalized and head (and nodes following) are in the bounds of the image
+// postconditions :
+void averageColor(Node head, Image picture, Image newPicture)
 {
-	// loop through the linkedList of headNode and using their rows and columns I would get the 
+	// loop through the linkedList of Node and using their rows and columns I would get the 
 	// pixel colors add them up and devide by the number of pixels
 
 	int numOfPixels = 0,
@@ -179,100 +229,141 @@ void averageColor(bodyNode headNode, Image picture)
 		blue = 0,
 		green = 0;
 
-	while (headNode.next)
+	Node* current = &head;
+
+	// while next node isn't a headNode add
+	do 
 	{
+		blue += picture.colorBlue(current->row, current->col);
+		green += picture.colorGreen(current->row, current->col);
+		red += picture.colorRed(current->row, current->col);
 
-	}
+		numOfPixels++;
 
+		current = current->next;
+	} while (!current->next->ifHead && current->next != nullptr); //!current.next->ifHead) // error is here
+
+	// then get the average by divide by numOfPixels added
+
+	blue /= numOfPixels;
+	red /= numOfPixels;
+	green /= numOfPixels;
+
+	// change head to this color in the new picture
+	newPicture.changeBlue(head.row, head.col, blue);
+	newPicture.changeRed(head.row, head.col, red);
+	newPicture.changeGreen(head.row, head.col, green);
 }
 
 
-// spread : makes a bodyNode linkedList of all the objects that are  
+// spread : makes a Node linkedList of all the objects that are  
 // Preconditions:  that the Image's are initialized, and that head and current also have proper linkedLists
 // Postconditions: the newPicture will look like a watered-down version of oldPicture
-void spread(const bodyNode & newHead, bodyNode & currentNode, const Image & oldPicture, Image & newPicture)
+void spread(Node & newHead, Node & curNode, const Image & oldPicture, Image & newPicture, linkedList list, int allowedDif)
 {
-	// change color of new image at current postion to whatever a wanabia ?
-	// to black
-	newPicture.changeBlue(currentNode.row, currentNode.col, 255); // is this supposed to be 255 or 0 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
-	newPicture.changeGreen(currentNode.row, currentNode.col, 255);
-	newPicture.changeRed(currentNode.row, currentNode.col, 255);
+	// change color of new image at current postion to white becuase it starts as black,  (black = 0, white = 255)
+	newPicture.changeBlue(curNode.row, curNode.col, 255);
+	newPicture.changeGreen(curNode.row, curNode.col, 255);
+	newPicture.changeRed(curNode.row, curNode.col, 255);
 	
-	
-	// recursively call for the top, left right and bottom
+
+	// recursively call for the top, left right and bottom of current node
 
 	// top
-	if (currentNode.row - 1 >= 0 && ifNotTaken() && 
-		oldPicture.ifSimilarColor(newHead.row, newHead.col, currentNode.row - 1, currentNode.col, 100))
+	if (curNode.row - 1 >= 0 && ifNotTaken(newPicture, curNode.row - 1, curNode.col) && // something wrong with ifNotTaken (parameters not function)
+		oldPicture.ifSimilarColor(newHead.row, newHead.col, curNode.row - 1, curNode.col, allowedDif))
 	{
-		// create new bodyNode
-		currentNode->top = newBodyNode(currentNode.row - 1, currentNode.col);
+		// create new bodyNode (and insert it after the newHead)
+		curNode.next = &list.insertNode(curNode.row - 1, curNode.col, curNode.next);
+
 
 		// call spread for that node
-		spread(newHead, currentNode->top, oldPicture, newPicture);
+		//spread(newHead, /*list->top*/ curNode, oldPicture, newPicture, list, allowedDif); // shouldn't be calling for curNode
+		spread(newHead, /*list->top*/ *curNode.next, oldPicture, newPicture, list, allowedDif);
 	}
 
 	// bottom
-	if (currentNode.row + 1 < oldPicture.getrows() && ifNotTaken() && 
-		oldPicture.ifSimilarColor(newHead.row, newHead.col, currentNode.row + 1, currentNode.col, 100))
+	if (curNode.row + 1 < oldPicture.getrows() && ifNotTaken(newPicture, curNode.row + 1, curNode.col) && 
+		oldPicture.ifSimilarColor(newHead.row, newHead.col, curNode.row + 1, curNode.col, allowedDif))
 	{
-		// create new bodyNode
-		currentNode->bottom = newBodyNode(currentNode.row + 1, currentNode.col);
+		// create new bodyNode (and insert it after the newHead)
+		curNode.next = &list.insertNode(curNode.row + 1, curNode.col, curNode.next); 
 
 		// call spread for that node
-		spread(newHead, currentNode->bottom, oldPicture, newPicture);
+		spread(newHead, *curNode.next, oldPicture, newPicture, list, allowedDif);
 	}
 
 	// left
-	if (currentNode.col - 1  >= 0 && ifNotTaken() && 
-		oldPicture.ifSimilarColor(newHead.row, newHead.col, currentNode.row, currentNode.col - 1, 100))
+	if (curNode.col - 1  >= 0 && ifNotTaken(newPicture, curNode.row, curNode.col - 1) &&
+		oldPicture.ifSimilarColor(newHead.row, newHead.col, curNode.row, curNode.col - 1, allowedDif))
 	{
-		// create new bodyNode
-		currentNode->left = newBodyNode(currentNode.row, currentNode.col - 1);
+		// create new bodyNode (and insert it after the newHead)
+		curNode.next = &list.insertNode(curNode.row, curNode.col - 1, curNode.next);
 
 		// call spread for that node
-		spread(newHead, currentNode->left, oldPicture, newPicture);
+		spread(newHead, *curNode.next, oldPicture, newPicture, list, allowedDif);
 	}
 
 	// Right
-	if (currentNode.col + 1 < oldPicture.getcols() && ifNotTaken() && 
-		oldPicture.ifSimilarColor(newHead.row, newHead.col, currentNode.row, currentNode.col + 1, 100))
+	if (curNode.col + 1 < oldPicture.getcols() && ifNotTaken(newPicture, curNode.row, curNode.col + 1) &&
+		oldPicture.ifSimilarColor(newHead.row, newHead.col, curNode.row, curNode.col + 1, allowedDif))
 	{
-		// create new bodyNode
-		currentNode->right = newBodyNode(currentNode.row, currentNode.col + 1);
+		// create new bodyNode (and insert it after the newHead)
+		curNode.next = &list.insertNode(curNode.row, curNode.col + 1, curNode.next);
 
 		// call spread for that node
-		spread(newHead, currentNode->right, oldPicture, newPicture);
+		spread(newHead, *curNode.next, oldPicture, newPicture, list, allowedDif);
 	}
 }
 
 // ifNotTaken : checks if the image at a certian pixel is black or white
 // Preconditions:  that the Image's are initialized, and that head and current also have proper linkedLists
 // Postconditions: the newPicture will look like a watered-down version of oldPicture
-bool ifNotTaken()
+bool ifNotTaken(const Image & picture, int row, int col)
 {
-	
+	// If it is black it has not been taken
+	bool ifBlack = false;
 
-	return true;
+	if (picture.colorBlue(row, col) + picture.colorGreen(row, col) + picture.colorRed(row, col) == 0)
+		ifBlack = true;
+
+	return ifBlack;
 }
 
 
-// recursiveColorChange : changes the number of green color tone
+//needs to change but first need to make the averageColor functionand a way to access the red, blue, green of the node, (the averageColor could just change the head)
+//have a copyPixel function(copying the color);
+
+// recursiveColorChange : changes the color of all the nodes under head to the color that head is
 // Preconditions:  that the Image's are initialized, and that head and current also have proper linkedLists
-// Postconditions: the newPicture will look like a watered-down version of oldPicture
-void recursiveColorChange(const bodyNode * head, bodyNode * current, const Image & oldPicture, Image & newPicture)
+// Postconditions: all the nodes between head and and the next node with ifHead == true;
+void recursiveColorChange(const Node * head, Node * current, Image & newPicture) // need average color not current / head (only need one not both)
 {
 	// if it isn't the first time that this is called 
+	//if (head != current)
+	//{
+		//// change the color of the current node
+		//newPicture.changeBlue(current->row, current->col, oldPicture.colorBlue(head->row, head->col));
+		//newPicture.changeGreen(current->row, current->col, oldPicture.colorGreen(head->row, head->col));
+		//newPicture.changeRed(current->row, current->col, oldPicture.colorRed(head->row, head->col));
+	//}
+
+	// if the current node isn't the head
 	if (head != current)
 	{
 		// change the color of the current node
-		newPicture.changeBlue(current->row, current->col, oldPicture.colorBlue(head->row, head->col));
-		newPicture.changeGreen(current->row, current->col, oldPicture.colorGreen(head->row, head->col));
-		newPicture.changeRed(current->row, current->col, oldPicture.colorRed(head->row, head->col));
+		newPicture.changeBlue(current->row, current->col, newPicture.colorBlue(head->row, head->col));
+		newPicture.changeGreen(current->row, current->col, newPicture.colorGreen(head->row, head->col));
+		newPicture.changeRed(current->row, current->col, newPicture.colorRed(head->row, head->col));
 	}
+	
+	// if the next node isn't a head node call recursively 
+	if (!current->next->ifHead && current->next != nullptr)
+		recursiveColorChange(head, current->next, newPicture);
+
 
 	// recursively call for the top, left right and bottom
-	if (current->top != nullptr)
+	/*if (current->top != nullptr)
 	{
 		recursiveColorChange(head, current->top, oldPicture, newPicture);
 	}
@@ -290,7 +381,7 @@ void recursiveColorChange(const bodyNode * head, bodyNode * current, const Image
 	if (current->right != nullptr)
 	{
 		recursiveColorChange(head, current->right, oldPicture, newPicture);
-	}
+	}*/
 }
 
 

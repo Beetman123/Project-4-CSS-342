@@ -54,7 +54,8 @@ public:
 	//				Each pixel has red = 0, green = 0, blue = 0.
 	//				Otherwise, the returned image has:
 	//				rows = 0, cols = 0, pixels = nullptr.
-	image createImage (int rows, int cols); 
+	//image createImage (int rows, int cols);									// Changing function !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
+	void createImage(int rows, int cols);
 
 	// readImage:
 	// Preconditions:  filename refers to a file that stores a GIF image.
@@ -112,7 +113,10 @@ public:
 	// Postconditions: 'a' = 'b' and 'b' = 'a'
 	void swapPixels(pixel& p1, pixel& p2);
 
-
+	// copyPixel: copys the color of one pixel to another
+	// Preconditions:  None
+	// Postconditions: a's color == b's color 
+	void copyPixel(pixel& orgin, pixel& copy);
 
 	// getSize : returns how many pixels are in the image
 	// Preconditions:  that the Image is initialized 

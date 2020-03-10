@@ -17,23 +17,27 @@
 // cant include Image.h, cant use pixel at all
 // cant be able to access pixels
 
-// A LinkedList node for the nodes simaliar to the unique node
-typedef struct bodyNode 
-{
-	bodyNode * top, // pointer to the node above the current bodyNode
-		* bottom,	// pointer to the node below the current bodyNode
-		* left,		// pointer to the left of the current bodyNode
-		* right;	// pointer to the right of the current bodyNode
+// A LinkedList Node for the nodes simaliar to the unique node
+//typedef struct bodyNode  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!!! Dont need top bottom left right (probably dont need bodynode)
+//{
+//	bodyNode * top, // pointer to the Node above the current bodyNode
+//		* bottom,	// pointer to the Node below the current bodyNode
+//		* left,		// pointer to the left of the current bodyNode
+//		* right;	// pointer to the right of the current bodyNode
+//
+//	
+//} ;
 
-	int row,		// the row of current bodyNode
-		col;		// the column of current bodyNode
-} ;
-
-// A LinkedList node for the 'master' / unique nodes
-typedef struct headNode
+// A LinkedList Node for the 'master' / unique nodes
+typedef struct Node
 {
-	headNode * next;		// pointer to next headNode
-	bodyNode */**/ linkedPix;	// pointer to the head's bodynode
+	Node * next;		// pointer to next node
+	//bodyNode */**/ linkedPix;	// pointer to the head's bodynode
+
+	int row,		// the row of current Node
+		col;		// the column of current Node
+
+	bool ifHead;
 };
 
 
@@ -46,15 +50,22 @@ public:
 	linkedList();
 
 
-	// newHeadNode : Creates a new headNode 
+	Node newNode();
+
+	// newNode : Creates a new Node 
 	// preconditions : given in bounds, positive rows and columns
 	// postconditions : none
-	void newHeadNode(int row, int col, headNode* lastHead);
+	Node newNode(int row, int col);
+
+	Node newNode(int row, int col, bool ifHead);
+
+	Node insertNode(int row, int col, Node * nextNode);
+
 
 	// newBodyNode : returns a new bodyNode 
 	// preconditions : given in bounds, positive rows and columns
 	// postconditions : that the bodyNode isn't automaticaly attached
-	bodyNode newBodyNode(int row, int col);
+	//bodyNode newBodyNode(int row, int col);
 
 	// linkedList : deletes a linkedList
 	// preconditions : none
@@ -62,7 +73,7 @@ public:
 	~linkedList();
 
 private:
-	headNode masterNode;
-	//headNode* masterList; // the "head of heads"
+	//Node masterNode;
+	//node* masterList; // the "head of heads"
 };
 
