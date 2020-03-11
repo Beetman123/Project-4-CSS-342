@@ -29,25 +29,17 @@
 //} ;
 
 // A LinkedList Node for the 'master' / unique nodes
-typedef struct Node
-{
-	Node * next;		// pointer to next node
-	//bodyNode */**/ linkedPix;	// pointer to the head's bodynode
 
-	int row,		// the row of current Node
-		col;		// the column of current Node
-
-	bool ifHead;
-};
-
-
-class linkedList
+class Node
 {
 public:
 	// linkedList : initalizes a linkedList
 	// preconditions : none
 	// postconditions : none
-	linkedList();
+	Node();
+
+	// need a description for copy constructor !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	Node(const Node * old);
 
 
 	Node newNode();
@@ -57,10 +49,20 @@ public:
 	// postconditions : none
 	Node newNode(int row, int col);
 
+	Node(int row, int col);
+
+	Node(int row, int col, bool ifHead);
+
+	Node(int row, int col, Node* nextNode);
+
 	Node newNode(int row, int col, bool ifHead);
 
-	Node insertNode(int row, int col, Node * nextNode);
+	Node insertNode(int row, int col, Node* nextNode);
 
+	Node operator = (const Node& orign) const;
+
+
+	void merge(Node* list);
 
 	// newBodyNode : returns a new bodyNode 
 	// preconditions : given in bounds, positive rows and columns
@@ -70,10 +72,78 @@ public:
 	// linkedList : deletes a linkedList
 	// preconditions : none
 	// postconditions : none
-	~linkedList();
+	~Node();
+	
+
+	Node * next;		// pointer to next node
+	//bodyNode */**/ linkedPix;	// pointer to the head's bodynode
+
+	int row,		// the row of current Node
+		col;		// the column of current Node
+
+	bool ifHead;
 
 private:
 	//Node masterNode;
 	//node* masterList; // the "head of heads"
 };
+
+
+
+//// A LinkedList Node for the 'master' / unique nodes
+//typedef struct Node
+//{
+//	Node * next;		// pointer to next node
+//	//bodyNode */**/ linkedPix;	// pointer to the head's bodynode
+//
+//	int row,		// the row of current Node
+//		col;		// the column of current Node
+//
+//	bool ifHead;
+//};
+//
+//
+//class linkedList
+//{
+//public:
+//	// linkedList : initalizes a linkedList
+//	// preconditions : none
+//	// postconditions : none
+//	linkedList();
+//
+//	// need a copy constructor !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//
+//	Node a(const Node oldNode);
+//
+//
+//	Node newNode();
+//
+//	// newNode : Creates a new Node 
+//	// preconditions : given in bounds, positive rows and columns
+//	// postconditions : none
+//	Node newNode(int row, int col);
+//
+//	Node newNode(int row, int col, bool ifHead);
+//
+//	Node insertNode(int row, int col, Node * nextNode);
+//
+//	Node operator = (const Node & orign) const;
+//
+//
+//	Node merge(Node* list);
+//
+//	// newBodyNode : returns a new bodyNode 
+//	// preconditions : given in bounds, positive rows and columns
+//	// postconditions : that the bodyNode isn't automaticaly attached
+//	//bodyNode newBodyNode(int row, int col);
+//
+//	// linkedList : deletes a linkedList
+//	// preconditions : none
+//	// postconditions : none
+//	~linkedList();
+//
+//private:
+//	//Node masterNode;
+//	//node* masterList; // the "head of heads"
+//};
 

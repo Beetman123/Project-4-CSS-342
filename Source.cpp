@@ -15,8 +15,9 @@ using namespace std;
 // spread : makes a Node linkedList of all the objects that are  
 // Preconditions:  that the Image's are initialized, and that head and current also have proper linkedLists
 // Postconditions: the newPicture will look like a watered-down version of oldPicture
-void spread(Node & newHead, Node & list, const Image& oldPicture, Image& newPicture, linkedList linklst, int allowedDif);
 
+// void spread(Node & newHead, Node & list, const Image& oldPicture, Image& newPicture, linkedList linklst, int allowedDif);
+Node * spread(Node& seed, Node& list, const Image& oldPicture, Image& newPicture, int allowedDif);
 
 // Done
 
@@ -41,7 +42,7 @@ int main() // have to use recursion and the up down left right
 	Image picture, // inputed picture
 		newPicture; // picture but changed				
 
-	linkedList picList;  // used to call linkedList functions
+	//linkedList picList;  // used to call linkedList functions
 
 	Node * list = nullptr, // head of entire list of nodes  error given is that list is uninialized
 		* listBack = nullptr, // pointer to the end of the list
@@ -125,17 +126,19 @@ int main() // have to use recursion and the up down left right
 					//picList.newnode(row, col, &list);
 				
 																															// there is something wrong here
+
+				// WHat NEEDS TO HAPPEN IS THAT THIS IS PART OF MERGE AND MERGE IS SUPPOSED TO COME AFTER SPREAD
 				// if list.next doesn't have 
 				if (list == nullptr)
 				{
-					list = &picList.newNode(row, col, true);
+					list = &Node(row, col, true);
 					listBack = list;
 					//listBack->next = nullptr; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 				}
 
 				else
 				{
-					listBack->next = &picList.newNode(row, col, true);
+					listBack->next = &Node(row, col, true);
 					listBack = listBack->next;
 					//listBack->next = nullptr; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 				}
@@ -145,7 +148,7 @@ int main() // have to use recursion and the up down left right
 				//list->next = picList.newNode();
 
 				// get all the nodes that are similar
-				spread(*listBack, *listBack, picture, newPicture, picList, allowedDifInPixels); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				Node * newList = spread(*listBack, *listBack, picture, newPicture, allowedDifInPixels); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			
 				//}
 				// if there are then create a new one
@@ -214,6 +217,137 @@ int main() // have to use recursion and the up down left right
 	return 0;
 }
 
+
+
+// spread : makes a Node linkedList of all the objects that are  
+// Preconditions:  that the Image's are initialized, and that head and current also have proper linkedLists
+// Postconditions: the newPicture will look like a watered-down version of oldPicture
+Node * spread(Node & seed, Node & curNode, const Image& oldPicture, Image& newPicture, int allowedDif)
+{
+	
+		 //= head; // NEED TO MAKE A = OPERATOR !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+	
+	// change color of new image at current postion to white becuase it starts as black,  (black = 0, white = 255)
+	newPicture.changeBlue(curNode.row, curNode.col, 255);
+	newPicture.changeGreen(curNode.row, curNode.col, 255);
+	newPicture.changeRed(curNode.row, curNode.col, 255);
+
+
+	// recursively call for the top, left right and bottom of current node
+
+	// top
+	if (curNode.row - 1 >= 0 && ifNotTaken(newPicture, curNode.row - 1, curNode.col) && // something wrong with ifNotTaken (parameters not function)
+		oldPicture.ifSimilarColor(seed.row, seed.col, curNode.row - 1, curNode.col, allowedDif))
+	{
+		// create new bodyNode (and insert it after the newHead)
+		curNode.next = &Node(curNode.row - 1, curNode.col, curNode.next);
+
+
+		// call spread for that node
+		//spread(newHead, /*list->top*/ curNode, oldPicture, newPicture, list, allowedDif); // shouldn't be calling for curNode
+		curNode.next = spread(seed, /*list->top*/ *curNode.next, oldPicture, newPicture, allowedDif);
+	}
+
+	// bottom
+	if (curNode.row + 1 < oldPicture.getrows() && ifNotTaken(newPicture, curNode.row + 1, curNode.col) &&
+		oldPicture.ifSimilarColor(seed.row, seed.col, curNode.row + 1, curNode.col, allowedDif))
+	{
+		// create new bodyNode (and insert it after the newHead)
+		curNode.next = &Node(curNode.row + 1, curNode.col, curNode.next);
+
+		// call spread for that node
+		curNode.next = spread(seed, *curNode.next, oldPicture, newPicture, allowedDif);
+	}
+
+	// left
+	if (curNode.col - 1 >= 0 && ifNotTaken(newPicture, curNode.row, curNode.col - 1) &&
+		oldPicture.ifSimilarColor(seed.row, seed.col, curNode.row, curNode.col - 1, allowedDif))
+	{
+		// create new bodyNode (and insert it after the newHead)
+		curNode.next = &Node(curNode.row, curNode.col - 1, curNode.next);
+
+		// call spread for that node
+		curNode.next = spread(seed, *curNode.next, oldPicture, newPicture, allowedDif);
+	}
+
+	// Right
+	if (curNode.col + 1 < oldPicture.getcols() && ifNotTaken(newPicture, curNode.row, curNode.col + 1) &&
+		oldPicture.ifSimilarColor(seed.row, seed.col, curNode.row, curNode.col + 1, allowedDif))
+	{
+		// create new bodyNode (and insert it after the newHead)
+		curNode.next = &Node(curNode.row, curNode.col + 1, curNode.next);
+
+		// call spread for that node
+		curNode.next = spread(seed, *curNode.next, oldPicture, newPicture, allowedDif);
+	}
+	
+	// return curNode
+	return &curNode;
+}
+
+//// spread : makes a Node linkedList of all the objects that are  
+//// Preconditions:  that the Image's are initialized, and that head and current also have proper linkedLists
+//// Postconditions: the newPicture will look like a watered-down version of oldPicture
+//void spread(Node & newHead, Node & curNode, const Image & oldPicture, Image & newPicture, linkedList list, int allowedDif)
+//{
+//	// change color of new image at current postion to white becuase it starts as black,  (black = 0, white = 255)
+//	newPicture.changeBlue(curNode.row, curNode.col, 255);
+//	newPicture.changeGreen(curNode.row, curNode.col, 255);
+//	newPicture.changeRed(curNode.row, curNode.col, 255);
+//	
+//
+//	// recursively call for the top, left right and bottom of current node
+//
+//	// top
+//	if (curNode.row - 1 >= 0 && ifNotTaken(newPicture, curNode.row - 1, curNode.col) && // something wrong with ifNotTaken (parameters not function)
+//		oldPicture.ifSimilarColor(newHead.row, newHead.col, curNode.row - 1, curNode.col, allowedDif))
+//	{
+//		// create new bodyNode (and insert it after the newHead)
+//		curNode.next = &list.insertNode(curNode.row - 1, curNode.col, curNode.next);
+//
+//
+//		// call spread for that node
+//		//spread(newHead, /*list->top*/ curNode, oldPicture, newPicture, list, allowedDif); // shouldn't be calling for curNode
+//		spread(newHead, /*list->top*/ *curNode.next, oldPicture, newPicture, list, allowedDif);
+//	}
+//
+//	// bottom
+//	if (curNode.row + 1 < oldPicture.getrows() && ifNotTaken(newPicture, curNode.row + 1, curNode.col) && 
+//		oldPicture.ifSimilarColor(newHead.row, newHead.col, curNode.row + 1, curNode.col, allowedDif))
+//	{
+//		// create new bodyNode (and insert it after the newHead)
+//		curNode.next = &list.insertNode(curNode.row + 1, curNode.col, curNode.next); 
+//
+//		// call spread for that node
+//		spread(newHead, *curNode.next, oldPicture, newPicture, list, allowedDif);
+//	}
+//
+//	// left
+//	if (curNode.col - 1  >= 0 && ifNotTaken(newPicture, curNode.row, curNode.col - 1) &&
+//		oldPicture.ifSimilarColor(newHead.row, newHead.col, curNode.row, curNode.col - 1, allowedDif))
+//	{
+//		// create new bodyNode (and insert it after the newHead)
+//		curNode.next = &list.insertNode(curNode.row, curNode.col - 1, curNode.next);
+//
+//		// call spread for that node
+//		spread(newHead, *curNode.next, oldPicture, newPicture, list, allowedDif);
+//	}
+//
+//	// Right
+//	if (curNode.col + 1 < oldPicture.getcols() && ifNotTaken(newPicture, curNode.row, curNode.col + 1) &&
+//		oldPicture.ifSimilarColor(newHead.row, newHead.col, curNode.row, curNode.col + 1, allowedDif))
+//	{
+//		// create new bodyNode (and insert it after the newHead)
+//		curNode.next = &list.insertNode(curNode.row, curNode.col + 1, curNode.next);
+//
+//		// call spread for that node
+//		spread(newHead, *curNode.next, oldPicture, newPicture, list, allowedDif);
+//	}
+//}
+
+
+
 // NOTE: needs to be the average color of all the pixels in the linked list
 
 // averageColor : Gets the average color from head node until next ifHead is true and changes head to the average
@@ -241,7 +375,7 @@ void averageColor(Node head, Image picture, Image newPicture)
 		numOfPixels++;
 
 		current = current->next;
-	} while (!current->next->ifHead && current->next != nullptr); //!current.next->ifHead) // error is here
+	} while (!current->next->ifHead && current->next != nullptr); //!current.next->ifHead)						 // error is here
 
 	// then get the average by divide by numOfPixels added
 
@@ -255,66 +389,6 @@ void averageColor(Node head, Image picture, Image newPicture)
 	newPicture.changeGreen(head.row, head.col, green);
 }
 
-
-// spread : makes a Node linkedList of all the objects that are  
-// Preconditions:  that the Image's are initialized, and that head and current also have proper linkedLists
-// Postconditions: the newPicture will look like a watered-down version of oldPicture
-void spread(Node & newHead, Node & curNode, const Image & oldPicture, Image & newPicture, linkedList list, int allowedDif)
-{
-	// change color of new image at current postion to white becuase it starts as black,  (black = 0, white = 255)
-	newPicture.changeBlue(curNode.row, curNode.col, 255);
-	newPicture.changeGreen(curNode.row, curNode.col, 255);
-	newPicture.changeRed(curNode.row, curNode.col, 255);
-	
-
-	// recursively call for the top, left right and bottom of current node
-
-	// top
-	if (curNode.row - 1 >= 0 && ifNotTaken(newPicture, curNode.row - 1, curNode.col) && // something wrong with ifNotTaken (parameters not function)
-		oldPicture.ifSimilarColor(newHead.row, newHead.col, curNode.row - 1, curNode.col, allowedDif))
-	{
-		// create new bodyNode (and insert it after the newHead)
-		curNode.next = &list.insertNode(curNode.row - 1, curNode.col, curNode.next);
-
-
-		// call spread for that node
-		//spread(newHead, /*list->top*/ curNode, oldPicture, newPicture, list, allowedDif); // shouldn't be calling for curNode
-		spread(newHead, /*list->top*/ *curNode.next, oldPicture, newPicture, list, allowedDif);
-	}
-
-	// bottom
-	if (curNode.row + 1 < oldPicture.getrows() && ifNotTaken(newPicture, curNode.row + 1, curNode.col) && 
-		oldPicture.ifSimilarColor(newHead.row, newHead.col, curNode.row + 1, curNode.col, allowedDif))
-	{
-		// create new bodyNode (and insert it after the newHead)
-		curNode.next = &list.insertNode(curNode.row + 1, curNode.col, curNode.next); 
-
-		// call spread for that node
-		spread(newHead, *curNode.next, oldPicture, newPicture, list, allowedDif);
-	}
-
-	// left
-	if (curNode.col - 1  >= 0 && ifNotTaken(newPicture, curNode.row, curNode.col - 1) &&
-		oldPicture.ifSimilarColor(newHead.row, newHead.col, curNode.row, curNode.col - 1, allowedDif))
-	{
-		// create new bodyNode (and insert it after the newHead)
-		curNode.next = &list.insertNode(curNode.row, curNode.col - 1, curNode.next);
-
-		// call spread for that node
-		spread(newHead, *curNode.next, oldPicture, newPicture, list, allowedDif);
-	}
-
-	// Right
-	if (curNode.col + 1 < oldPicture.getcols() && ifNotTaken(newPicture, curNode.row, curNode.col + 1) &&
-		oldPicture.ifSimilarColor(newHead.row, newHead.col, curNode.row, curNode.col + 1, allowedDif))
-	{
-		// create new bodyNode (and insert it after the newHead)
-		curNode.next = &list.insertNode(curNode.row, curNode.col + 1, curNode.next);
-
-		// call spread for that node
-		spread(newHead, *curNode.next, oldPicture, newPicture, list, allowedDif);
-	}
-}
 
 // ifNotTaken : checks if the image at a certian pixel is black or white
 // Preconditions:  that the Image's are initialized, and that head and current also have proper linkedLists
@@ -383,6 +457,24 @@ void recursiveColorChange(const Node * head, Node * current, Image & newPicture)
 		recursiveColorChange(head, current->right, oldPicture, newPicture);
 	}*/
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // make a linked list of the head nodes so that when you want to call them to print you can call it without knowing how many there are
