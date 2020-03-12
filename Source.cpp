@@ -45,7 +45,7 @@ int main() // have to use recursion and the up down left right
 	//linkedList picList;  // used to call linkedList functions
 
 	Node * list = nullptr, // head of entire list of nodes  error given is that list is uninialized
-		* listBack = nullptr, // pointer to the end of the list
+		* listBack = nullptr, // pointer to the end of the list											 ?!!
 		* current = nullptr;
 
 	const int allowedDifInPixels = 100;
@@ -114,18 +114,29 @@ int main() // have to use recursion and the up down left right
 			{
 				cout << "numberOfSeedPixels = " << ++numberOfSeedPixels << "   ";
 
-
-
-				// if there are no masterNodes
-				//if (list.next == nullptr)
-				//{
-					// create the first masterNode
-
-					//masterList.next.newBodyNode(row, col);
-					//list.next = &picList.newBodyNode(row, col);/*next-> (?)*/
-					//picList.newnode(row, col, &list);
+				// Make the list for the seed
 				
-																															// there is something wrong here
+				//Node * newList = spread(*listBack, *listBack, picture, newPicture, allowedDifInPixels); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				Node* newList = &Node(row, col, true);
+				//Node * firstNode = &Node(row, col, true);
+
+				//newList = spread(*newList, *newList, picture, newPicture, allowedDifInPixels);
+				newList->addPixel(spread(*newList, *newList, picture, newPicture, allowedDifInPixels));
+
+
+				 //spread isn't working !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				 //	 spread isn't returning what it is supposed to
+
+				// then merge it to the existing list 
+				newList->merge(list);
+
+				// then delete the newList
+				
+				// do I need to do this ????											// Question !!!
+
+
+
+				// use if need be ---------------------------------------------------------------------------------------------------------------------
 
 				// WHat NEEDS TO HAPPEN IS THAT THIS IS PART OF MERGE AND MERGE IS SUPPOSED TO COME AFTER SPREAD
 				// if list.next doesn't have 
@@ -148,7 +159,7 @@ int main() // have to use recursion and the up down left right
 				//list->next = picList.newNode();
 
 				// get all the nodes that are similar
-				Node * newList = spread(*listBack, *listBack, picture, newPicture, allowedDifInPixels); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				
 			
 				//}
 				// if there are then create a new one
@@ -237,50 +248,54 @@ Node * spread(Node & seed, Node & curNode, const Image& oldPicture, Image& newPi
 	// recursively call for the top, left right and bottom of current node
 
 	// top
-	if (curNode.row - 1 >= 0 && ifNotTaken(newPicture, curNode.row - 1, curNode.col) && // something wrong with ifNotTaken (parameters not function)
-		oldPicture.ifSimilarColor(seed.row, seed.col, curNode.row - 1, curNode.col, allowedDif))
-	{
-		// create new bodyNode (and insert it after the newHead)
-		curNode.next = &Node(curNode.row - 1, curNode.col, curNode.next);
+	//if (curNode.row - 1 >= 0 && ifNotTaken(newPicture, curNode.row - 1, curNode.col) && // something wrong with ifNotTaken (parameters not function)
+	//	oldPicture.ifSimilarColor(seed.row, seed.col, curNode.row - 1, curNode.col, allowedDif))
+	//{
+	//	// create new bodyNode (and insert it after the seed)
+	//	curNode.next = &Node(curNode.row - 1, curNode.col, curNode.next);
 
-
-		// call spread for that node
-		//spread(newHead, /*list->top*/ curNode, oldPicture, newPicture, list, allowedDif); // shouldn't be calling for curNode
-		curNode.next = spread(seed, /*list->top*/ *curNode.next, oldPicture, newPicture, allowedDif);
-	}
+	//	// call spread for that node
+	//	//spread(newHead, /*list->top*/ curNode, oldPicture, newPicture, list, allowedDif); // shouldn't be calling for curNode
+	//	curNode.next = spread(seed, /*list->top*/ *curNode.next, oldPicture, newPicture, allowedDif);
+	//}
 
 	// bottom
 	if (curNode.row + 1 < oldPicture.getrows() && ifNotTaken(newPicture, curNode.row + 1, curNode.col) &&
 		oldPicture.ifSimilarColor(seed.row, seed.col, curNode.row + 1, curNode.col, allowedDif))
 	{
 		// create new bodyNode (and insert it after the newHead)
-		curNode.next = &Node(curNode.row + 1, curNode.col, curNode.next);
+		curNode.next->addPixel(&Node(curNode.row + 1, curNode.col, curNode.next));
+
+		curNode = curNode.next;
+
+		// curNode is updated
 
 		// call spread for that node
-		curNode.next = spread(seed, *curNode.next, oldPicture, newPicture, allowedDif);
+		//curNode.next = spread(seed, curNode, oldPicture, newPicture, allowedDif);
+		curNode.next = &Node(spread(seed, curNode, oldPicture, newPicture, allowedDif), curNode.next);
 	}
 
-	// left
-	if (curNode.col - 1 >= 0 && ifNotTaken(newPicture, curNode.row, curNode.col - 1) &&
-		oldPicture.ifSimilarColor(seed.row, seed.col, curNode.row, curNode.col - 1, allowedDif))
-	{
-		// create new bodyNode (and insert it after the newHead)
-		curNode.next = &Node(curNode.row, curNode.col - 1, curNode.next);
+	//// left
+	//if (curNode.col - 1 >= 0 && ifNotTaken(newPicture, curNode.row, curNode.col - 1) &&
+	//	oldPicture.ifSimilarColor(seed.row, seed.col, curNode.row, curNode.col - 1, allowedDif))
+	//{
+	//	// create new bodyNode (and insert it after the newHead)
+	//	curNode.next = &Node(curNode.row, curNode.col - 1, curNode.next);
 
-		// call spread for that node
-		curNode.next = spread(seed, *curNode.next, oldPicture, newPicture, allowedDif);
-	}
+	//	// call spread for that node
+	//	curNode.next = spread(seed, *curNode.next, oldPicture, newPicture, allowedDif);
+	//}
 
-	// Right
-	if (curNode.col + 1 < oldPicture.getcols() && ifNotTaken(newPicture, curNode.row, curNode.col + 1) &&
-		oldPicture.ifSimilarColor(seed.row, seed.col, curNode.row, curNode.col + 1, allowedDif))
-	{
-		// create new bodyNode (and insert it after the newHead)
-		curNode.next = &Node(curNode.row, curNode.col + 1, curNode.next);
+	//// Right
+	//if (curNode.col + 1 < oldPicture.getcols() && ifNotTaken(newPicture, curNode.row, curNode.col + 1) &&
+	//	oldPicture.ifSimilarColor(seed.row, seed.col, curNode.row, curNode.col + 1, allowedDif))
+	//{
+	//	// create new bodyNode (and insert it after the newHead)
+	//	curNode.next = &Node(curNode.row, curNode.col + 1, curNode.next);
 
-		// call spread for that node
-		curNode.next = spread(seed, *curNode.next, oldPicture, newPicture, allowedDif);
-	}
+	//	// call spread for that node
+	//	curNode.next = spread(seed, *curNode.next, oldPicture, newPicture, allowedDif);
+	//}
 	
 	// return curNode
 	return &curNode;

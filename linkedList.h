@@ -28,6 +28,8 @@
 //	
 //} ;
 
+// constructor, copy constructor, operator=, destructor, addPixel, and merge(see below.) You can implement other member functions(including sizeand averageColor), if desired.
+
 // A LinkedList Node for the 'master' / unique nodes
 
 class Node
@@ -39,27 +41,38 @@ public:
 	Node();
 
 	// need a description for copy constructor !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	Node(const Node * old);
+	Node(/*const*/ Node * old); // for some reason the const affects the program !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	// but I need the const for the copy constructor right?
 
+	//Node newNode();
 
-	Node newNode();
-
-	// newNode : Creates a new Node 
+	// Node : Creates a new Node 
 	// preconditions : given in bounds, positive rows and columns
-	// postconditions : none
-	Node newNode(int row, int col);
-
+	// postconditions : new Node is returned
 	Node(int row, int col);
 
+	// Node : Creates a new Node 
+	// preconditions : given in bounds, positive rows and columns
+	// postconditions : new Node is returned
 	Node(int row, int col, bool ifHead);
 
+	// Node : Creates a new Node 
+	// preconditions : given in bounds, positive rows and columns
+	// postconditions : new Node is returned with its next pointing to nextNode
 	Node(int row, int col, Node* nextNode);
 
-	Node newNode(int row, int col, bool ifHead);
+	// Node : Creates a new Node 
+	// preconditions : given in bounds, positive rows and columns
+	// postconditions : new Node is returned
+	Node(const Node* nextNode, Node* nextPtr);
 
-	Node insertNode(int row, int col, Node* nextNode);
 
-	Node operator = (const Node& orign) const;
+
+	//Node operator = (const Node& orign);
+
+	/*Node * operator = (Node* orign);*/
+
+	Node addPixel (const Node& orign);
 
 
 	void merge(Node* list);

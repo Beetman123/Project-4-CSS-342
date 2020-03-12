@@ -169,12 +169,33 @@ Node::Node()
 }
 
 // copy constructor
-Node::Node(const Node* old)
+Node::Node(/*const*/ Node* old)
 {
-	this->row = old->row;
-	this->col = old->col;
-	this->ifHead = old->ifHead;
-	this->next = old->next;
+	Node* nextNode,
+		*prevNext = nullptr;
+	
+	while (prevNext != old)
+	{
+		nextNode = old;
+
+		while (nextNode->next == nullptr && nextNode->next != prevNext)
+		{
+			nextNode = nextNode->next;
+		}
+
+		this->row = nextNode->row;
+		this->col = nextNode->col;
+		this->ifHead = nextNode->ifHead;
+		this->next = nextNode->next;
+
+		prevNext = nextNode;
+	}
+		
+
+	
+
+	// need to call for this.next
+	//this->next(old->next);
 }
 
 
@@ -210,7 +231,8 @@ Node::Node(int row, int col, bool ifHead)
 	this->next = nullptr;
 }
 
-Node::Node(int row, int col, Node* nextNode)
+
+Node::Node(int row, int col, Node* nextNode) // calling this function !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 {
 	this->ifHead = false;
 	this->col = col;
@@ -218,22 +240,153 @@ Node::Node(int row, int col, Node* nextNode)
 	this->next = nextNode;
 }
 
-Node Node::operator = (const Node& orign) const
+
+Node::Node(const Node* nextNode, Node * nextPtr)
 {
-	return orign;
+	this->ifHead = nextNode->ifHead;
+	this->col = nextNode->col;
+	this->row = nextNode->row;
+	this->next = nextPtr;
 }
 
+
+
+
+
+//Node Node::operator = (const Node& orign) // for Nodes
+//{
+//
+//
+//
+//	//if (&orign != nullptr)
+//	//{
+//	//	// get to last node of orign
+//	//	const Node* last = &orign,
+//	//		* prevLast = nullptr;
+//
+//	//	do
+//	//	{
+//	//		// loops through to the last element in the list
+//	//		while (last != nullptr && last->next != nullptr && last->next == prevLast)
+//	//			last = last->next;
+//
+//	//		//copy it and have this point to it
+//	//		this->next = &Node(last, this->next);
+//
+//	//		prevLast = last;
+//
+//	//	} while (prevLast != &orign);
+//
+//	//	// repeat
+//
+//	//	return this;
+//
+//	//	//if (orign.next == nullptr)
+//	////	return orign;
+//
+//
+//	////else
+//	////	
+//	////	
+//
+//	////last = &Node(orign);
+//	////	
+//	////	orign->next = nxtNode->next;
+//
+//	////nxtNode = nxtNode->next;
+//	////orign = orign->next;
+//
+//
+//	//	// this if is done to check if there is only one node in the list and to not try checking nullptrs 'next'
+//	//		//if(list->next != nullptr)
+//	//			//list = list->next;
+//
+//	//}
+//
+//	//else
+//	//	return orign;
+//	
+//}
+
+
+
+// for pointers
+//Node * Node::operator = (Node * orign) // would li
+//{
+//	return orign;
+//}
+
+// needs to be recusive
+//Node Node::operator += (const Node& orign)
+Node Node::addPixel(const Node& orign)
+{
+	if (&orign != nullptr)
+	{
+		// get to last node of orign
+		const Node* last = &orign,
+			* prevLast = nullptr;
+
+		do
+		{
+			// loops through to the last element in the list
+			while (last != nullptr && last->next != nullptr && last->next == prevLast)
+				last = last->next;
+
+			//copy it and have this point to it
+			*this->next = &Node(last, this->next);
+
+			prevLast = last;
+
+		} while (prevLast != &orign);
+
+		// repeat
+
+		return *this;
+
+
+		// this if is done to check if there is only one node in the list and to not try checking nullptrs 'next'
+			//if(list->next != nullptr)
+				//list = list->next;
+
+	}
+
+	else
+		return orign;
+	
+
+	//												original 
+	/*const Node* last = this;
+
+	while (last->next != nullptr)
+		last = last->next;
+
+	last = &Node(orign);
+	return *this;*/
+}
+
+
+
+
+// precondition : that there is at least 1 node in the list
+// postcondition : that 
 void Node::merge(Node* list)
 {
-	Node* nxtNode = list;
+	Node* nxtNode = this;
 
 	do
 	{
-		this->next = &Node(nxtNode); 
+		if (this == nullptr)
+			*this = nxtNode;
+
+		else
+			list->next = nxtNode->next;
+		
+		nxtNode = nxtNode->next;
+		list = list->next;
 
 	// this if is done to check if there is only one node in the list and to not try checking nullptrs 'next'
-		if(nxtNode->next != nullptr) 
-			nxtNode = nxtNode->next;
+		//if(list->next != nullptr)
+			//list = list->next;
 	} while (nxtNode->next != nullptr);
 }
 
