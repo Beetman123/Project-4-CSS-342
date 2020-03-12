@@ -6,7 +6,8 @@
 //#include "linkedList.h" // ? // I don't need linkedList class I only need a Node ion the Image class
 
 #include "Image.h"
-#include "linkedList.h"
+#include "Node.h"
+//#include "linkedList.h"
 
 using namespace std;
 
@@ -121,7 +122,7 @@ int main() // have to use recursion and the up down left right
 				//Node * firstNode = &Node(row, col, true);
 
 				//newList = spread(*newList, *newList, picture, newPicture, allowedDifInPixels);
-				newList->addPixel(spread(*newList, *newList, picture, newPicture, allowedDifInPixels));
+				newList->addPixel(*spread(*newList, *newList, picture, newPicture, allowedDifInPixels), newList);
 
 
 				 //spread isn't working !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -263,8 +264,10 @@ Node * spread(Node & seed, Node & curNode, const Image& oldPicture, Image& newPi
 	if (curNode.row + 1 < oldPicture.getrows() && ifNotTaken(newPicture, curNode.row + 1, curNode.col) &&
 		oldPicture.ifSimilarColor(seed.row, seed.col, curNode.row + 1, curNode.col, allowedDif))
 	{
+		Node* newNode = &Node(curNode.row + 1, curNode.col, curNode.next);
 		// create new bodyNode (and insert it after the newHead)
-		curNode.next->addPixel(&Node(curNode.row + 1, curNode.col, curNode.next));
+		//curNode.next->addPixel(&Node(curNode.row + 1, curNode.col, curNode.next));
+		curNode.next->addPixel(*newNode, &curNode); // changes the seed !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		curNode = curNode.next;
 
